@@ -17,6 +17,12 @@
         <div class="glow glow-pink"></div>
     </div>
 
+    <!-- Модальне вікно для перегляду картинок на весь екран -->
+    <div class="lightbox" id="lightbox">
+        <button class="close-btn" id="closeLightbox">&times;</button>
+        <img src="" alt="Повноекранна робота" id="lightboxImg">
+    </div>
+
     <div class="wrapper">
         <main class="bento-grid">
             
@@ -106,36 +112,62 @@
         </main>
     </div>
 
-    <!-- Скрипт для 3D обертання карток за курсором -->
+    <!-- Скрипт для 3D та повноекранного перегляду (Lightbox) -->
     <script>
         const cards = document.querySelectorAll('.bento-card');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const closeLightbox = document.getElementById('closeLightbox');
 
+        // 3D ефект наведення
         cards.forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; // положення курсора по X всередині картки
-                const y = e.clientY - rect.top;  // положення курсора по Y всередині картки
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
 
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
 
-                // Обчислюємо кут нахилу (чим ближче до краю, тим сильніший нахил)
-                const rotateX = -((y - centerY) / centerY) * 10; // нахил по осі X
-                const rotateY = ((x - centerX) / centerX) * 10;  // нахил по осі Y
+                const rotateX = -((y - centerY) / centerY) * 10;
+                const rotateY = ((x - centerX) / centerX) * 10;
 
                 card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
             });
 
-            // Коли курсор залишає картку, плавно повертаємо її у звичайне положення
             card.addEventListener('mouseleave', () => {
                 card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
                 card.style.transition = 'transform 0.5s ease';
             });
 
-            // Забираємо transition під час руху, щоб рух був миттєвим і плавним без затримок
             card.addEventListener('mouseenter', () => {
                 card.style.transition = 'none';
             });
+        });
+
+        // Відкриття картинки на весь екран при кліку на роботу
+        const workCards = document.querySelectorAll('.work-card');
+        workCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const img = card.querySelector('img');
+                lightboxImg.src = img.src;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden'; // блокуємо прокрутку сторінки
+            });
+        });
+
+        // Закриття по хрестику
+        closeLightbox.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+
+        // Закриття при кліку на темний фон навколо картинки
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
         });
     </script>
 
