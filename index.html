@@ -43,7 +43,7 @@
                 </a>
             </div>
 
-            <!-- Блок 3: Нова робота (Повербанк) -->
+            <!-- Блок 3: Робота -->
             <div class="bento-card work-card">
                 <img src="work-12.png" alt="Дизайн картки: Повербанк 80000 mAh">
             </div>
@@ -105,6 +105,39 @@
 
         </main>
     </div>
+
+    <!-- Скрипт для 3D обертання карток за курсором -->
+    <script>
+        const cards = document.querySelectorAll('.bento-card');
+
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; // положення курсора по X всередині картки
+                const y = e.clientY - rect.top;  // положення курсора по Y всередині картки
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                // Обчислюємо кут нахилу (чим ближче до краю, тим сильніший нахил)
+                const rotateX = -((y - centerY) / centerY) * 10; // нахил по осі X
+                const rotateY = ((x - centerX) / centerX) * 10;  // нахил по осі Y
+
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+
+            // Коли курсор залишає картку, плавно повертаємо її у звичайне положення
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+                card.style.transition = 'transform 0.5s ease';
+            });
+
+            // Забираємо transition під час руху, щоб рух був миттєвим і плавним без затримок
+            card.addEventListener('mouseenter', () => {
+                card.style.transition = 'none';
+            });
+        });
+    </script>
 
 </body>
 </html>
